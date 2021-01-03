@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageObjDetectionForm", "ImageObjDetectionForm\ImageObjDetectionForm.csproj", "{5B58B613-080D-426C-9310-1E5BF9EF9298}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageObjectDetectionMLForm", "ImageObjectDetectionML\ImageObjectDetectionMLForm.csproj", "{379D5AD9-E93F-4BD2-9FF6-FBCDA41650E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectRecognitionONNX", "ObjectRecognitionNNOX\ObjectRecognitionONNX.csproj", "{89C5852C-413D-4BC2-A30E-1300E0635BEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectRecognitionONNX", "ObjectRecognitionNNOX\ObjectRecognitionONNX.csproj", "{89C5852C-413D-4BC2-A30E-1300E0635BEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageObjDetection.API", "ImageObjDetection.API\ImageObjDetection.API.csproj", "{E145AE0D-6470-4713-B8E2-B2703470CF95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{5B58B613-080D-426C-9310-1E5BF9EF9298}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B58B613-080D-426C-9310-1E5BF9EF9298}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B58B613-080D-426C-9310-1E5BF9EF9298}.Release|Any CPU.Build.0 = Release|Any CPU
-		{379D5AD9-E93F-4BD2-9FF6-FBCDA41650E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{379D5AD9-E93F-4BD2-9FF6-FBCDA41650E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{379D5AD9-E93F-4BD2-9FF6-FBCDA41650E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{379D5AD9-E93F-4BD2-9FF6-FBCDA41650E1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{89C5852C-413D-4BC2-A30E-1300E0635BEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{89C5852C-413D-4BC2-A30E-1300E0635BEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89C5852C-413D-4BC2-A30E-1300E0635BEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89C5852C-413D-4BC2-A30E-1300E0635BEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E145AE0D-6470-4713-B8E2-B2703470CF95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E145AE0D-6470-4713-B8E2-B2703470CF95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E145AE0D-6470-4713-B8E2-B2703470CF95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E145AE0D-6470-4713-B8E2-B2703470CF95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
