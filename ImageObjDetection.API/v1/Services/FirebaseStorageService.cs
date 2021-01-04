@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace ImageObjDetection.API.v1.Services
@@ -35,18 +36,15 @@ namespace ImageObjDetection.API.v1.Services
             var downloadUrl = await task;
         }
 
-        public async Task<MemoryStream>  DownloadFile(string userEmail, string date, string url)
+        public async Task<MemoryStream> DownloadFile(string userData, string url, string accessToken)
         {
             MemoryStream stream;
             using (var client = new HttpClient())
             {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var content = await client.GetByteArrayAsync(url);
                 stream = new MemoryStream(content);
                 return stream;
-                //using (var stream = new MemoryStream(content))
-                //{
-
-                //}
             }
         }
 
