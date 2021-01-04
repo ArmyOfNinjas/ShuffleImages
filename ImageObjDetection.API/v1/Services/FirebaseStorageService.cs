@@ -11,9 +11,10 @@ namespace ImageObjDetection.API.v1.Services
 {
     public class FirebaseStorageService
     {
-        private string Bucket = "image-shuffler-ui.appspot.com/";
-        private string AuthEmail = "";
-        private string RefreshToken = "";
+        private string apiKey = "AIzaSyAnjoXZd7IXXE0Y3N3W1urGBCkuy_MD1SI";
+        private string bucket = "image-shuffler-ui.appspot.com/";
+        private string authEmail = "api-image-shuffler@gmail.com";
+        private string password = "Shuffle12Api!@";
 
         public async void UploadFile(string userEmail, string date)
         {
@@ -21,7 +22,7 @@ namespace ImageObjDetection.API.v1.Services
             var stream = File.Open(@"C:\Users\you\file.png", FileMode.Open);
 
             // Constructr FirebaseStorage, path to where you want to upload the file and Put it there
-            var task = new FirebaseStorage(Bucket)
+            var task = new FirebaseStorage(bucket)
                 .Child("images")
                 .Child("random")
                 .Child("file.png")
