@@ -17,7 +17,7 @@ namespace ImageObjDetection.API.v1.Services
         private string authEmail = "api-image-shuffler@gmail.com";
         private string password = "Shuffle12Api!@";
 
-        public async void UploadFile(string userEmail, string date)
+        public async void UploadFile(string userEmail, string date, string[] urls)
         {
             // Get any Stream - it can be FileStream, MemoryStream or any other type of Stream
             var stream = File.Open(@"C:\Users\you\file.png", FileMode.Open);
@@ -25,7 +25,8 @@ namespace ImageObjDetection.API.v1.Services
             // Constructr FirebaseStorage, path to where you want to upload the file and Put it there
             var task = new FirebaseStorage(bucket)
                 .Child("images")
-                .Child("random")
+                .Child(userEmail)
+                .Child(date)
                 .Child("file.png")
                 .PutAsync(stream);
 

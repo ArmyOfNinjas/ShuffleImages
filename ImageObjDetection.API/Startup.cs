@@ -42,6 +42,8 @@ namespace ImageObjDetection.API
 
             app.UseAuthorization();
 
+            //app.UseMiddleware<ApiKeyValidatorMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
