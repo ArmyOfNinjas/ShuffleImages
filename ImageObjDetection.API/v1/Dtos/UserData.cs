@@ -8,7 +8,7 @@ namespace ImageObjDetection.API.v1.Dtos
 	public class UserData
 	{
 		public string UserEmail { get; set; }
-		public string[] URLs { get; set; }
+		public string[] FileNames { get; set; }
 		public string DateTime { get; set; }
 	}
 }

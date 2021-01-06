@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ImageObjDetection.API.v1.Services
@@ -19,17 +20,27 @@ namespace ImageObjDetection.API.v1.Services
 		private string authEmail = "api-image-shuffler@gmail.com";
 		private string password = "Shuffle12Api!@";
 
-		public async void UploadFile(string userEmail, string date, string[] urls)
+		public async void UploadFile(string userEmail, string date)
 		{
 			// Get any Stream - it can be FileStream, MemoryStream or any other type of Stream
-			var stream = File.Open(@"C:\Users\you\file.png", FileMode.Open);
+			string assetsPath = GetAbsolutePath(@"../../../v1/Images/1.jpg");
+			var stream = File.Open(assetsPath, FileMode.Open);
+
+			var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+			var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
+
+			var firebase = new FirebaseStorage(bucket,
+			  new FirebaseStorageOptions
+			  {
+				  AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken)
+			  });
 
 			// Constructr FirebaseStorage, path to where you want to upload the file and Put it there
-			var task = new FirebaseStorage(bucket)
+			var task = firebase
 				.Child("images")
 				.Child(userEmail)
 				.Child(date)
-				.Child("file.png")
+				.Child("6.jpg")
 				.PutAsync(stream);
 
 			// Track progress of the upload
@@ -42,15 +53,15 @@ namespace ImageObjDetection.API.v1.Services
 
 		public async Task ProcessData(UserData userData, string accessToken)
 		{
-			for (int i = 0; i < userData.URLs.Length; i++)
+			for (int i = 0; i < userData.FileNames.Length; i++)
 			{
-				MemoryStream ms = await DownloadFileFromUrl(userData, i, accessToken);
-				var modelsRelativePath = @"../../../Images";
+				MemoryStream ms = await DownloadFileFromUrl(userData.UserEmail, userData.DateTime, userData.FileNames[i], accessToken);
+				var modelsRelativePath = @"../../../v1/Images";
 				string assetsPath = GetAbsolutePath(modelsRelativePath);
 
 				using (ms)
 				{
-					using (FileStream fs = new FileStream($"{assetsPath}/{i}.txt", FileMode.OpenOrCreate))
+					using (FileStream fs = new FileStream($"{assetsPath}/{userData.FileNames[i]}", FileMode.OpenOrCreate))
 					{
 						ms.CopyTo(fs);
 						fs.Flush();
@@ -59,35 +70,39 @@ namespace ImageObjDetection.API.v1.Services
 			}
 		}
 
-		public async Task<MemoryStream> DownloadFileFromUrl(UserData userData, int index, string accessToken)
-		{
-			var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-			//var auth = await authProvider.SignInWithOAuthAsync(FirebaseAuthType.Google, accessToken);
-			//var auth = await authProvider.SignInWithCustomTokenAsync(accessToken);
-			var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
 
-			var firebase = new FirebaseStorage(bucket,
+
+
+		public async Task<MemoryStream> DownloadFileFromUrl(string userEmail, string dateTime, string fileName, string accessToken)
+		{
+            //var auth = await authProvider.SignInWithCustomTokenAsync(accessToken);
+			var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+            //var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
+            var auth = await authProvider.SignInWithOAuthAsync(FirebaseAuthType.Google, accessToken);
+
+            var firebase = new FirebaseStorage(bucket,
 			  new FirebaseStorageOptions
 			  {
-				  AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken)
-			  });
+                  AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken)
+              });
 
-			var image = await firebase
+			var imageUrl = await firebase
 			  .Child("images")
-			  .Child(userData.UserEmail)
-			  .Child(userData.DateTime)
+			  .Child(userEmail)
+			  .Child(dateTime)
+			  .Child(fileName)
 			  .GetDownloadUrlAsync();
 
 
-			MemoryStream stream;
-			using (var client = new HttpClient())
-			{
-				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-				var content = await client.GetByteArrayAsync(userData.URLs[index]);
-				stream = new MemoryStream(content);
-				return stream;
-			}
-		}
+			MemoryStream stream = null;
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var content = await client.GetByteArrayAsync(imageUrl);
+                stream = new MemoryStream(content);
+                return stream;
+            }
+        }
 
 
 		public static string GetAbsolutePath(string relativePath)
