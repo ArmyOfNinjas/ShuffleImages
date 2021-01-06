@@ -11,7 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="v1\Models\" />
+    <Folder Include="v1\Images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ImageObjDetectionForm\ImageObjDetectionForm.csproj" />
+    <ProjectReference Include="..\ObjectRecognitionNNOX\ObjectRecognitionONNX.csproj" />
   </ItemGroup>
 
 
