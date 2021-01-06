@@ -1,6 +1,7 @@
 ﻿using Firebase.Auth;
 using Firebase.Storage;
 using ImageObjDetection.API.v1.Dtos;
+using ImageObjDetectionForm;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,11 +21,11 @@ namespace ImageObjDetection.API.v1.Services
 		private string authEmail = "api-image-shuffler@gmail.com";
 		private string password = "Shuffle12Api!@";
 
-		public async void UploadFile(string userEmail, string date)
+		public async void UploadFile(MemoryStream memoryStream, string userEmail, string dateTime, string fileName)
 		{
 			// Get any Stream - it can be FileStream, MemoryStream or any other type of Stream
-			string assetsPath = GetAbsolutePath(@"../../../v1/Images/1.jpg");
-			var stream = File.Open(assetsPath, FileMode.Open);
+			//string assetsPath = GetAbsolutePath(@"../../../v1/Images/1.jpg");
+			//var stream = File.Open(assetsPath, FileMode.Open);
 
 			var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
 			var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
@@ -39,9 +40,10 @@ namespace ImageObjDetection.API.v1.Services
 			var task = firebase
 				.Child("images")
 				.Child(userEmail)
-				.Child(date)
-				.Child("6.jpg")
-				.PutAsync(stream);
+				.Child(dateTime)
+				.Child("detected objects")
+				.Child(fileName)
+				.PutAsync(memoryStream);
 
 			// Track progress of the upload
 			task.Progress.ProgressChanged += (s, e) => Console.WriteLine($"Progress: {e.Percentage} %");
@@ -51,23 +53,30 @@ namespace ImageObjDetection.API.v1.Services
 		}
 
 
-		public async Task ProcessData(UserData userData, string accessToken)
+		public async Task<List<MemoryStream>> ProcessData(UserData userData, string accessToken)
 		{
+			List<MemoryStream> streams = new List<MemoryStream>();
+			YoloObjectDetector yoloObjectDetector = new YoloObjectDetector();
 			for (int i = 0; i < userData.FileNames.Length; i++)
 			{
-				MemoryStream ms = await DownloadFileFromUrl(userData.UserEmail, userData.DateTime, userData.FileNames[i], accessToken);
-				var modelsRelativePath = @"../../../v1/Images";
-				string assetsPath = GetAbsolutePath(modelsRelativePath);
+				MemoryStream stream = await DownloadFileFromUrl(userData.UserEmail, userData.DateTime, userData.FileNames[i], accessToken);
+				MemoryStream updatedStream = yoloObjectDetector.DetectObjects(stream);
+				UploadFile(updatedStream, userData.UserEmail, userData.DateTime, userData.FileNames[i]);
+				streams.Add(updatedStream);
 
-				using (ms)
+				using (updatedStream)
 				{
+					var modelsRelativePath = @"../../../v1/Images";
+					string assetsPath = GetAbsolutePath(modelsRelativePath);
 					using (FileStream fs = new FileStream($"{assetsPath}/{userData.FileNames[i]}", FileMode.OpenOrCreate))
 					{
-						ms.CopyTo(fs);
+						updatedStream.CopyTo(fs);
 						fs.Flush();
 					}
 				}
 			}
+
+			return streams;
 		}
 
 
@@ -75,16 +84,16 @@ namespace ImageObjDetection.API.v1.Services
 
 		public async Task<MemoryStream> DownloadFileFromUrl(string userEmail, string dateTime, string fileName, string accessToken)
 		{
-            //var auth = await authProvider.SignInWithCustomTokenAsync(accessToken);
+			//var auth = await authProvider.SignInWithCustomTokenAsync(accessToken);
 			var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-            //var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
-            var auth = await authProvider.SignInWithOAuthAsync(FirebaseAuthType.Google, accessToken);
+			//var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
+			var auth = await authProvider.SignInWithOAuthAsync(FirebaseAuthType.Google, accessToken);
 
-            var firebase = new FirebaseStorage(bucket,
+			var firebase = new FirebaseStorage(bucket,
 			  new FirebaseStorageOptions
 			  {
-                  AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken)
-              });
+				  AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken)
+			  });
 
 			var imageUrl = await firebase
 			  .Child("images")
@@ -95,14 +104,14 @@ namespace ImageObjDetection.API.v1.Services
 
 
 			MemoryStream stream = null;
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var content = await client.GetByteArrayAsync(imageUrl);
-                stream = new MemoryStream(content);
-                return stream;
-            }
-        }
+			using (var client = new HttpClient())
+			{
+				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+				var content = await client.GetByteArrayAsync(imageUrl);
+				stream = new MemoryStream(content);
+				return stream;
+			}
+		}
 
 
 		public static string GetAbsolutePath(string relativePath)
