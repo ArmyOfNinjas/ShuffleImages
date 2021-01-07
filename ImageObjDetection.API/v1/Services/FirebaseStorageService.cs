@@ -2,6 +2,7 @@
 using Firebase.Storage;
 using ImageObjDetection.API.v1.Dtos;
 using ImageObjDetectionForm;
+using ObjectRecognitionONNX;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -57,10 +58,12 @@ namespace ImageObjDetection.API.v1.Services
 		{
 			List<MemoryStream> streams = new List<MemoryStream>();
 			YoloObjectDetector yoloObjectDetector = new YoloObjectDetector();
+			ONNXObjectRecognizer oNNXObjectRecognizer = new ONNXObjectRecognizer();
 			for (int i = 0; i < userData.FileNames.Length; i++)
 			{
 				MemoryStream stream = await DownloadFileFromUrl(userData.UserEmail, userData.DateTime, userData.FileNames[i], accessToken);
-				MemoryStream updatedStream = yoloObjectDetector.DetectObjects(stream);
+				//MemoryStream updatedStream = yoloObjectDetector.DetectObjects(stream);
+				MemoryStream updatedStream = oNNXObjectRecognizer.DetectObjects(stream);
 				UploadFile(updatedStream, userData.UserEmail, userData.DateTime, userData.FileNames[i]);
 				streams.Add(updatedStream);
 
@@ -86,10 +89,10 @@ namespace ImageObjDetection.API.v1.Services
 		{
 			//var auth = await authProvider.SignInWithCustomTokenAsync(accessToken);
 			var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-			//var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
-			var auth = await authProvider.SignInWithOAuthAsync(FirebaseAuthType.Google, accessToken);
+            var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
+            //var auth = await authProvider.SignInWithOAuthAsync(FirebaseAuthType.Google, accessToken);
 
-			var firebase = new FirebaseStorage(bucket,
+            var firebase = new FirebaseStorage(bucket,
 			  new FirebaseStorageOptions
 			  {
 				  AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken)

@@ -9,6 +9,7 @@
     <PackageReference Include="Alturos.Yolo" Version="2.6.4" />
     <PackageReference Include="Alturos.YoloV2TinyVocData" Version="1.0.0" />
     <PackageReference Include="Microsoft.ML" Version="1.5.4" />
+    <PackageReference Include="Microsoft.ML.DataView" Version="1.5.4" />
     <PackageReference Include="Microsoft.ML.ImageAnalytics" Version="1.5.4" />
     <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.6.0" />
     <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="1.5.4" />
@@ -33,6 +34,10 @@
     <None Update="assets\Model\TinyYolo2_model.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="assets\images\output\" />
   </ItemGroup>
 
 </Project>
