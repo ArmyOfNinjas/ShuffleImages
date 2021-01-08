@@ -70,21 +70,21 @@ namespace ImageObjDetection.API.v1.Services
 			for (int i = 0; i < userData.FileNames.Length; i++)
 			{
 				MemoryStream stream = await DownloadFileFromUrl(userData.UserEmail, userData.DateTime, userData.FileNames[i], accessToken);
-				//MemoryStream updatedStream = yoloObjectDetector.DetectObjects(stream);
-				MemoryStream updatedStream = oNNXObjectRecognizer.DetectObjects(stream);
-				UploadFile(updatedStream, userData.UserEmail, userData.DateTime, userData.FileNames[i]);
+                MemoryStream updatedStream = yoloObjectDetector.DetectObject(stream);
+                //MemoryStream updatedStream = oNNXObjectRecognizer.DetectObjects(stream);
+                UploadFile(updatedStream, userData.UserEmail, userData.DateTime, userData.FileNames[i]);
 				streams.Add(updatedStream);
 
-				using (updatedStream)
-				{
-					var modelsRelativePath = @"../../../v1/Images";
-					string assetsPath = GetAbsolutePath(modelsRelativePath);
-					using (FileStream fs = new FileStream($"{assetsPath}/{userData.FileNames[i]}", FileMode.OpenOrCreate))
-					{
-						updatedStream.CopyTo(fs);
-						fs.Flush();
-					}
-				}
+				//using (updatedStream)
+				//{
+				//	var modelsRelativePath = @"../../../v1/Images";
+				//	string assetsPath = GetAbsolutePath(modelsRelativePath);
+				//	using (FileStream fs = new FileStream($"{assetsPath}/{userData.FileNames[i]}", FileMode.OpenOrCreate))
+				//	{
+				//		updatedStream.CopyTo(fs);
+				//		fs.Flush();
+				//	}
+				//}
 			}
 
 			return streams;

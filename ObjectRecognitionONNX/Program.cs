@@ -9,7 +9,7 @@ using ObjectRecognitionONNX.YoloParser;
 using ObjectRecognitionONNX.DataStructures;
 using ObjectRecognitionONNX;
 
-namespace ObjectRecognitionNNOX
+namespace ObjectRecognitionONNX
 {
 	class Program
 	{

@@ -19,33 +19,40 @@ namespace ImageObjDetectionForm
 			return updatedStream;
 		}
 
-		//public List<MemoryStream> DetectObjects(List<MemoryStream> streams)
-		//{
-		//	List<MemoryStream> updatedStreams = new List<MemoryStream>();
-		//	for (int i = 0; i < streams.Count; i++)
-		//	{
-		//		updatedStreams.Add(DetectObject(streams[i]));
-		//	}
-		//	return updatedStreams;
-		//}
-
-		private MemoryStream DetectObject(MemoryStream stream)
+		public MemoryStream DetectObject(MemoryStream stream)
 		{
 			MemoryStream updatedStream = null;
-			var configurationDetector = new ConfigurationDetector();
+			var configurationDetector = new YoloConfigurationDetector();
 			var config = configurationDetector.Detect();
-			var yolo = new YoloWrapper(config);
-			//var memoryStream = new MemoryStream();
-			//picImage.Image.Save(memoryStream, ImageFormat.Png);
-			using (stream)
+			using (var yoloWrapper = new YoloWrapper(config))
 			{
-				var items = yolo.Detect(stream.ToArray()).ToList();
-				updatedStream = AddDetailsToPictureBox(stream, items);
+				var items = yoloWrapper.Detect(stream.ToArray()).ToList();
+				using (stream)
+				{
+					updatedStream = AddDetailsToPictureBox(stream, items);
+				}
+				//items[0].Type -> "Person, Car, ..."
+				//items[0].Confidence -> 0.0 (low) -> 1.0 (high)
+				//items[0].X -> bounding box
+				//items[0].Y -> bounding box
+				//items[0].Width -> bounding box
+				//items[0].Height -> bounding box
 			}
+
+
+			//var configurationDetector = new YoloConfigurationDetector();
+			//var config = configurationDetector.Detect();
+			//var yolo = new YoloWrapper(config);
+			//using (stream)
+			//{
+			//	var items = yolo.Detect(stream.ToArray()).ToList();
+			//	updatedStream = AddDetailsToPictureBox(stream, items);
+			//}
+
 			return updatedStream;
 		}
 
-		private MemoryStream AddDetailsToPictureBox(MemoryStream stream, List<YoloItem> items)
+		private MemoryStream AddDetailsToPictureBox(MemoryStream stream, IEnumerable<YoloItem> items)
 		{
 			Image image = Image.FromStream(stream);
 			var font = new Font("Arial", 15, FontStyle.Bold);
