@@ -12,8 +12,8 @@ using ObjectRecognitionNNOX;
 
 namespace ObjectRecognitionONNX
 {
-    public class ONNXObjectRecognizer
-    {
+	public class ONNXObjectRecognizer
+	{
 		//public MemoryStream DetectObjects(MemoryStream stream)
 		//{
 		//	MemoryStream updatedStream = DetectObject(stream);
@@ -74,10 +74,14 @@ namespace ObjectRecognitionONNX
 		public MemoryStream DetectObjects(MemoryStream stream)
 		{
 			var assetsRelativePath = @"../../../assets";
+			string dir = Directory.GetCurrentDirectory().Replace("ImageObjDetection.API","ObjectRecognitionONNX");
 			string assetsPath = GetAbsolutePath(assetsRelativePath);
-			var modelFilePath = Path.Combine(assetsPath, "Model", "TinyYolo2_model.onnx");
-			var imagesFolder = Path.Combine(assetsPath, "images");
-			var outputFolder = Path.Combine(assetsPath, "images", "output");
+			string assetsPath2 = @"C:\GitHub\ArmyOfNinjas\ShuffleImages\ObjectRecognitionNNOX\bin\Debug\netcoreapp3.1\assets";
+			//string assetsPath2 = Path.Combine(dir, "assets");
+			var modelFilePath = Path.Combine(assetsPath2, "Model", "TinyYolo2_model.onnx");
+			var imagesFolder = Path.Combine(assetsPath2, "images");
+			var outputFolder = Path.Combine(assetsPath2, "images", "output");
+
 
 			MemoryStream updatedStream = null;
 			MLContext mlContext = new MLContext();

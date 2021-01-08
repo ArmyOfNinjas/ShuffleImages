@@ -36,6 +36,9 @@ namespace ImageObjDetection.API
 									  builder.WithOrigins("http://localhost:3000/");
 								  });
 			});
+
+			//_moviesApiKey = Configuration["Movies:ServiceApiKey"];
+
 			services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 		}
 

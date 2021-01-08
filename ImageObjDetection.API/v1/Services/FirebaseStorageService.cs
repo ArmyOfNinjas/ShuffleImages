@@ -2,6 +2,7 @@
 using Firebase.Storage;
 using ImageObjDetection.API.v1.Dtos;
 using ImageObjDetectionForm;
+using Microsoft.Extensions.Configuration;
 using ObjectRecognitionONNX;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,17 @@ namespace ImageObjDetection.API.v1.Services
 {
 	public class FirebaseStorageService
 	{
-		private string apiKey = "AIzaSyAnjoXZd7IXXE0Y3N3W1urGBCkuy_MD1SI";
+		private string apiKey = "";
 		private string bucket = "image-shuffler-ui.appspot.com";
-		private string authEmail = "api-image-shuffler@gmail.com";
-		private string password = "Shuffle12Api!@";
+		private string authEmail = "";
+		private string password = "";
+
+		public FirebaseStorageService(IConfiguration Configuration)
+		{
+			authEmail = Configuration["environmentVariables:Firebase_AuthEmail"];
+			password = Configuration["environmentVariables:Firebase_Password"];
+			apiKey = Configuration["environmentVariables:Firebase_ApiKey"];
+		}
 
 		public async void UploadFile(MemoryStream memoryStream, string userEmail, string dateTime, string fileName)
 		{
