@@ -130,7 +130,7 @@ namespace OnnxObjectDetectionWeb.Controllers
         {
             //Predict the objects in the image
             _objectDetectionService.DetectObjectsUsingModel(imageInputData);
-            var img = _objectDetectionService.DrawBoundingBox(imageFilePath);
+            var img = _objectDetectionService.DrawBoundingBox(imageFilePath, new MemoryStream());
 
             using (MemoryStream m = new MemoryStream())
             {

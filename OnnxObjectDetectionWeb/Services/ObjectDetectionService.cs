@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using OnnxObjectDetection;
+using System.IO;
 
 namespace OnnxObjectDetectionWeb.Services
 {
     public interface IObjectDetectionService
     {
         void DetectObjectsUsingModel(ImageInputData imageInputData);
-        Image DrawBoundingBox(string imageFilePath);
+        Image DrawBoundingBox(string imageFilePath, MemoryStream imageMemoryStream);
     }
 
     public class ObjectDetectionService : IObjectDetectionService
@@ -31,9 +32,10 @@ namespace OnnxObjectDetectionWeb.Services
             FilteredBoxes = outputParser.FilterBoundingBoxes(boundingBoxes, 5, .5F);
         }
 
-        public Image DrawBoundingBox(string imageFilePath)
+        public Image DrawBoundingBox(string imageFilePath, MemoryStream imageMemoryStream)
         {
-            Image image = Image.FromFile(imageFilePath);
+            //Image image = Image.FromFile(imageFilePath);
+            Image image = Image.FromStream(imageMemoryStream);
             var originalHeight = image.Height;
             var originalWidth = image.Width;
             foreach (var box in FilteredBoxes)

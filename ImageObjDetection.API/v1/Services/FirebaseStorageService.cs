@@ -139,7 +139,7 @@ namespace ImageObjDetection.API.v1.Services
                 //string fileName = string.Format("{0}.Jpeg", image.GetHashCode());
                 string imageFilePath = Path.Combine(_imagesTmpFolder, fileName);
                 //save image to a path
-                image.Save(imageFilePath, ImageFormat.Jpeg);
+                //image.Save(imageFilePath, ImageFormat.Jpeg);
 
                 //Convert to Bitmap
                 Bitmap bitmapImage = (Bitmap)image;
@@ -153,7 +153,7 @@ namespace ImageObjDetection.API.v1.Services
                 ImageInputData imageInputData = new ImageInputData { Image = bitmapImage };
 
                 //Detect the objects in the image                
-                var result = DetectAndPaintImage(imageInputData, imageFilePath);
+                var result = DetectAndPaintImage(imageInputData, imageFilePath, imageMemoryStream);
 
                 //Stop measuring time
                 watch.Stop();
@@ -170,11 +170,11 @@ namespace ImageObjDetection.API.v1.Services
             }
         }
 
-        private MemoryStream DetectAndPaintImage(ImageInputData imageInputData, string imageFilePath)
+        private MemoryStream DetectAndPaintImage(ImageInputData imageInputData, string imageFilePath, MemoryStream imageMemoryStream)
         {
             //Predict the objects in the image
             _objectDetectionService.DetectObjectsUsingModel(imageInputData);
-            var img = _objectDetectionService.DrawBoundingBox(imageFilePath);
+            var img = _objectDetectionService.DrawBoundingBox(imageFilePath, imageMemoryStream);
 
 
             MemoryStream m = new MemoryStream();
