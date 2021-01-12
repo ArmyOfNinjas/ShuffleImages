@@ -53,16 +53,15 @@ namespace ImageObjDetection.API.v1.Services
 
         public async Task<List<MemoryStream>> ProcessData(UserData userData)
         {
-            var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-            var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
+            FirebaseStorage firebase = await CreateFirebaseReferenceAsync();
 
             List<MemoryStream> streams = new List<MemoryStream>();
             for (int i = 0; i < userData.FileNames.Length; i++)
             {
-                MemoryStream stream = await DownloadFileFromUrl(userData.UserEmail, userData.DateTime, userData.FileNames[i], auth);
-                var updatedStream = IdentifyObjects(stream);
+                MemoryStream stream = await DownloadFileFromUrl(userData.UserEmail, userData.DateTime, userData.FileNames[i], firebase);
+                var updatedStream = IdentifyObjects(stream, userData.FileNames[i]);
 
-                UploadFile(updatedStream, userData.UserEmail, userData.DateTime, userData.FileNames[i], auth);
+                UploadFile(updatedStream, userData.UserEmail, userData.DateTime, userData.FileNames[i], firebase);
                 streams.Add(updatedStream);
             }
 
@@ -71,17 +70,8 @@ namespace ImageObjDetection.API.v1.Services
 
 
 
-        public async Task<MemoryStream> DownloadFileFromUrl(string userEmail, string dateTime, string fileName, FirebaseAuthLink auth)
+        public async Task<MemoryStream> DownloadFileFromUrl(string userEmail, string dateTime, string fileName, FirebaseStorage firebase)
         {
-            var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-            //var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
-
-            var firebase = new FirebaseStorage(bucket,
-              new FirebaseStorageOptions
-              {
-                  AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken)
-              });
-
             var imageUrl = await firebase
               .Child("images")
               .Child(userEmail)
@@ -101,51 +91,52 @@ namespace ImageObjDetection.API.v1.Services
         }
 
 
-        public async void UploadFile(MemoryStream memoryStream, string userEmail, string dateTime, string fileName, FirebaseAuthLink auth)
-        {
-            // Get any Stream - it can be FileStream, MemoryStream or any other type of Stream
-            //string assetsPath = GetAbsolutePath(@"../../../v1/Images/1.jpg");
-            //var stream = File.Open(assetsPath, FileMode.Open);
+        public async void UploadFile(MemoryStream memoryStream, string userEmail, string dateTime, string fileName, FirebaseStorage firebase)
+		{
+			// Get any Stream - it can be FileStream, MemoryStream or any other type of Stream
 
-            var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-            //var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
+			Console.Write(memoryStream.Length);
+			using (memoryStream)
+			{
+				// Constructr FirebaseStorage, path to where you want to upload the file and Put it there
+				var task = firebase
+				.Child("images")
+				.Child(userEmail)
+				.Child(dateTime)
+				.Child("detected objects")
+				.Child(fileName)
+				.PutAsync(memoryStream);
 
-            var firebase = new FirebaseStorage(bucket,
-              new FirebaseStorageOptions
-              {
-                  AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken)
-              });
+			// Track progress of the upload
+			task.Progress.ProgressChanged += (s, e) => Console.WriteLine($"Progress: {e.Percentage} %");
 
-            Console.Write(memoryStream.Length);
-            //using (memoryStream)
-            //{
-                // Constructr FirebaseStorage, path to where you want to upload the file and Put it there
-                var task = firebase
-                    .Child("images")
-                    .Child(userEmail)
-                    .Child(dateTime)
-                    .Child("detected objects")
-                    .Child(fileName)
-                    .PutAsync(memoryStream);
+			// await the task to wait until upload completes and get the download url
+			var downloadUrl = await task;
+		}
+	}
 
-                // Track progress of the upload
-                task.Progress.ProgressChanged += (s, e) => Console.WriteLine($"Progress: {e.Percentage} %");
+		private async Task<FirebaseStorage> CreateFirebaseReferenceAsync()
+		{
+			var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+			var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
 
-                // await the task to wait until upload completes and get the download url
-                var downloadUrl = await task;
-            //}
-        }
+			var firebase = new FirebaseStorage(bucket,
+			  new FirebaseStorageOptions
+			  {
+				  AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken)
+			  });
+			return firebase;
+		}
 
 
-
-        public MemoryStream IdentifyObjects(MemoryStream imageMemoryStream)
+		public MemoryStream IdentifyObjects(MemoryStream imageMemoryStream, string fileName)
         {
             try
             {
                 //Convert to Image
                 Image image = Image.FromStream(imageMemoryStream);
 
-                string fileName = string.Format("{0}.Jpeg", image.GetHashCode());
+                //string fileName = string.Format("{0}.Jpeg", image.GetHashCode());
                 string imageFilePath = Path.Combine(_imagesTmpFolder, fileName);
                 //save image to a path
                 image.Save(imageFilePath, ImageFormat.Jpeg);
@@ -185,8 +176,11 @@ namespace ImageObjDetection.API.v1.Services
             _objectDetectionService.DetectObjectsUsingModel(imageInputData);
             var img = _objectDetectionService.DrawBoundingBox(imageFilePath);
 
+
             MemoryStream m = new MemoryStream();
             img.Save(m, img.RawFormat);
+            m.Position = 0;
+
             return m;
             //using (MemoryStream m = new MemoryStream())
             //{
