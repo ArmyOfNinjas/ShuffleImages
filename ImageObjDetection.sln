@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageObjDetection.API", "ImageObjDetection.API\ImageObjDetection.API.csproj", "{E145AE0D-6470-4713-B8E2-B2703470CF95}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnnxObjectDetectionWeb", "..\machinelearning-samples\samples\csharp\end-to-end-apps\ObjectDetection-Onnx\OnnxObjectDetectionWeb\OnnxObjectDetectionWeb.csproj", "{ADFEF6CC-AFAF-4795-BBE4-3CF997BE36E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnnxObjectDetection", "OnnxObjectDetection\OnnxObjectDetection.csproj", "{8886E1A0-AD45-4E3E-8930-3D023F7AF4EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnnxObjectDetection", "..\machinelearning-samples\samples\csharp\end-to-end-apps\ObjectDetection-Onnx\OnnxObjectDetection\OnnxObjectDetection.csproj", "{83B80EE7-7AC7-473D-B267-B09521D0DF2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnnxObjectDetectionWeb", "OnnxObjectDetectionWeb\OnnxObjectDetectionWeb.csproj", "{009560EC-DF89-4135-8E88-DEDBC0E118EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{E145AE0D-6470-4713-B8E2-B2703470CF95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E145AE0D-6470-4713-B8E2-B2703470CF95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E145AE0D-6470-4713-B8E2-B2703470CF95}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ADFEF6CC-AFAF-4795-BBE4-3CF997BE36E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ADFEF6CC-AFAF-4795-BBE4-3CF997BE36E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ADFEF6CC-AFAF-4795-BBE4-3CF997BE36E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ADFEF6CC-AFAF-4795-BBE4-3CF997BE36E5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{83B80EE7-7AC7-473D-B267-B09521D0DF2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{83B80EE7-7AC7-473D-B267-B09521D0DF2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{83B80EE7-7AC7-473D-B267-B09521D0DF2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{83B80EE7-7AC7-473D-B267-B09521D0DF2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8886E1A0-AD45-4E3E-8930-3D023F7AF4EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8886E1A0-AD45-4E3E-8930-3D023F7AF4EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8886E1A0-AD45-4E3E-8930-3D023F7AF4EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8886E1A0-AD45-4E3E-8930-3D023F7AF4EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{009560EC-DF89-4135-8E88-DEDBC0E118EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{009560EC-DF89-4135-8E88-DEDBC0E118EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{009560EC-DF89-4135-8E88-DEDBC0E118EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{009560EC-DF89-4135-8E88-DEDBC0E118EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

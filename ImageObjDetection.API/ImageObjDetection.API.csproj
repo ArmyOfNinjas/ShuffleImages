@@ -40,12 +40,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\machinelearning-samples\samples\csharp\end-to-end-apps\ObjectDetection-Onnx\OnnxObjectDetectionWeb\OnnxObjectDetectionWeb.csproj" />
-    <ProjectReference Include="..\..\machinelearning-samples\samples\csharp\end-to-end-apps\ObjectDetection-Onnx\OnnxObjectDetection\OnnxObjectDetection.csproj" />
+    <Folder Include="Images\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Images\" />
+    <ProjectReference Include="..\OnnxObjectDetectionWeb\OnnxObjectDetectionWeb.csproj" />
+    <ProjectReference Include="..\OnnxObjectDetection\OnnxObjectDetection.csproj" />
   </ItemGroup>
 
   <ItemGroup>
