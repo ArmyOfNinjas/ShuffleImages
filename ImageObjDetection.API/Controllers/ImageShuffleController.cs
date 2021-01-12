@@ -3,6 +3,7 @@ using ImageObjDetection.API.v1.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using OnnxObjectDetectionWeb.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,11 @@ namespace ImageObjDetection.API.Controllers
 	public class ImageShuffleController : Controller
 	{
 
-		private readonly ILogger<ImageShuffleController> _logger;
 		private readonly FirebaseStorageService _firebaseStorageService;
 
-		public ImageShuffleController(ILogger<ImageShuffleController> logger, IConfiguration Configuration)
+		public ImageShuffleController(ILogger<FirebaseStorageService> logger, IConfiguration Configuration, IObjectDetectionService objectDetectionService)
 		{
-			_firebaseStorageService = new FirebaseStorageService(Configuration);
-			_logger = logger;
+			_firebaseStorageService = new FirebaseStorageService(Configuration, logger, objectDetectionService);
 		}
 
 		[HttpPost]
@@ -31,9 +30,7 @@ namespace ImageObjDetection.API.Controllers
 			{
 				if (value != null)
 				{
-					var accessToken = "";
-
-					var streams = await _firebaseStorageService.ProcessData(value, accessToken);
+					var streams = await _firebaseStorageService.ProcessData(value);
 
 					return Ok();
 				}

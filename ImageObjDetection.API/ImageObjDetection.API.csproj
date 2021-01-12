@@ -10,6 +10,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\imagesList\image1.jpg" />
+    <None Remove="Assets\imagesList\image2.jpg" />
+    <None Remove="Assets\imagesList\image3.jpg" />
+    <None Remove="Assets\imagesList\image4.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\imagesList\image1.jpg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Assets\imagesList\image2.jpg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Assets\imagesList\image3.jpg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Assets\imagesList\image4.jpg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Alturos.Yolo" Version="3.0.6-alpha" />
     <PackageReference Include="FirebaseAuthentication.net" Version="3.4.0" />
     <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
@@ -18,12 +40,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ImageObjDetectionForm\ImageObjDetectionForm.csproj" />
-    <ProjectReference Include="..\ObjectRecognitionONNX\ObjectRecognitionONNX.csproj" />
+    <ProjectReference Include="..\..\machinelearning-samples\samples\csharp\end-to-end-apps\ObjectDetection-Onnx\OnnxObjectDetectionWeb\OnnxObjectDetectionWeb.csproj" />
+    <ProjectReference Include="..\..\machinelearning-samples\samples\csharp\end-to-end-apps\ObjectDetection-Onnx\OnnxObjectDetection\OnnxObjectDetection.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ImagesTemp\Readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 

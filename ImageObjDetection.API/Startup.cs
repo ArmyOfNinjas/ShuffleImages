@@ -6,6 +6,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.ML;
+using OnnxObjectDetection;
+using OnnxObjectDetectionWeb.Infrastructure;
+using OnnxObjectDetectionWeb.Services;
+using OnnxObjectDetectionWeb.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +21,17 @@ namespace ImageObjDetection.API
 	public class Startup
 	{
 		readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+		private readonly string _onnxModelFilePath;
+		private readonly string _mlnetModelFilePath;
 
 		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
+
+			_onnxModelFilePath = CommonHelpers.GetAbsolutePath(Configuration["MLModel:OnnxModelFilePath"]);
+			_mlnetModelFilePath = CommonHelpers.GetAbsolutePath(Configuration["MLModel:MLNETModelFilePath"]);
+			var onnxModelConfigurator = new OnnxModelConfigurator(new TinyYoloModel(_onnxModelFilePath));
+			onnxModelConfigurator.SaveMLNetModel(_mlnetModelFilePath);
 		}
 
 		public IConfiguration Configuration { get; }
@@ -40,6 +52,11 @@ namespace ImageObjDetection.API
 			//_moviesApiKey = Configuration["Movies:ServiceApiKey"];
 
 			services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+			services.AddPredictionEnginePool<ImageInputData, TinyYoloPrediction>().FromFile(_mlnetModelFilePath);
+
+			services.AddTransient<IImageFileWriter, ImageFileWriter>();
+			services.AddTransient<IObjectDetectionService, ObjectDetectionService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +66,8 @@ namespace ImageObjDetection.API
 			{
 				app.UseDeveloperExceptionPage();
 			}
+
+			app.UseStaticFiles();
 
 			app.UseHttpsRedirection();
 
