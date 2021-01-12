@@ -53,17 +53,17 @@ namespace ImageObjDetection.API.v1.Services
 
         public async Task<List<MemoryStream>> ProcessData(UserData userData)
         {
+            var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+            var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
+
             List<MemoryStream> streams = new List<MemoryStream>();
             for (int i = 0; i < userData.FileNames.Length; i++)
             {
-                MemoryStream stream = await DownloadFileFromUrl(userData.UserEmail, userData.DateTime, userData.FileNames[i]);
-                //MemoryStream updatedStream = yoloObjectDetector.DetectObject(stream);
-                //MemoryStream updatedStream = oNNXObjectRecognizer.DetectObjects(stream);
-                var result = IdentifyObjects(stream);
+                MemoryStream stream = await DownloadFileFromUrl(userData.UserEmail, userData.DateTime, userData.FileNames[i], auth);
+                var updatedStream = IdentifyObjects(stream);
 
-
-                //UploadFile(updatedStream, userData.UserEmail, userData.DateTime, userData.FileNames[i]);
-                //streams.Add(updatedStream);
+                UploadFile(updatedStream, userData.UserEmail, userData.DateTime, userData.FileNames[i], auth);
+                streams.Add(updatedStream);
             }
 
             return streams;
@@ -71,13 +71,10 @@ namespace ImageObjDetection.API.v1.Services
 
 
 
-        public async Task<MemoryStream> DownloadFileFromUrl(string userEmail, string dateTime, string fileName)
+        public async Task<MemoryStream> DownloadFileFromUrl(string userEmail, string dateTime, string fileName, FirebaseAuthLink auth)
         {
             var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-            var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
-            //var accessToken = await HttpContext("access_token");
-            //var accessToken = Request.Headers[HeaderNames.Authorization];
-            //System.Net.Http.Headers.AuthenticationHeaderValue authorizationHeader = HttpContext.Request.Headers.Authorization;
+            //var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
 
             var firebase = new FirebaseStorage(bucket,
               new FirebaseStorageOptions
@@ -104,14 +101,14 @@ namespace ImageObjDetection.API.v1.Services
         }
 
 
-        public async void UploadFile(MemoryStream memoryStream, string userEmail, string dateTime, string fileName)
+        public async void UploadFile(MemoryStream memoryStream, string userEmail, string dateTime, string fileName, FirebaseAuthLink auth)
         {
             // Get any Stream - it can be FileStream, MemoryStream or any other type of Stream
             //string assetsPath = GetAbsolutePath(@"../../../v1/Images/1.jpg");
             //var stream = File.Open(assetsPath, FileMode.Open);
 
             var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
-            var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
+            //var auth = await authProvider.SignInWithEmailAndPasswordAsync(authEmail, password);
 
             var firebase = new FirebaseStorage(bucket,
               new FirebaseStorageOptions
@@ -119,47 +116,32 @@ namespace ImageObjDetection.API.v1.Services
                   AuthTokenAsyncFactory = () => Task.FromResult(auth.FirebaseToken)
               });
 
-            // Constructr FirebaseStorage, path to where you want to upload the file and Put it there
-            var task = firebase
-                .Child("images")
-                .Child(userEmail)
-                .Child(dateTime)
-                .Child("detected objects")
-                .Child(fileName)
-                .PutAsync(memoryStream);
+            Console.Write(memoryStream.Length);
+            //using (memoryStream)
+            //{
+                // Constructr FirebaseStorage, path to where you want to upload the file and Put it there
+                var task = firebase
+                    .Child("images")
+                    .Child(userEmail)
+                    .Child(dateTime)
+                    .Child("detected objects")
+                    .Child(fileName)
+                    .PutAsync(memoryStream);
 
-            // Track progress of the upload
-            task.Progress.ProgressChanged += (s, e) => Console.WriteLine($"Progress: {e.Percentage} %");
+                // Track progress of the upload
+                task.Progress.ProgressChanged += (s, e) => Console.WriteLine($"Progress: {e.Percentage} %");
 
-            // await the task to wait until upload completes and get the download url
-            var downloadUrl = await task;
+                // await the task to wait until upload completes and get the download url
+                var downloadUrl = await task;
+            //}
         }
 
 
 
-        public Result IdentifyObjects(MemoryStream imageMemoryStream)
+        public MemoryStream IdentifyObjects(MemoryStream imageMemoryStream)
         {
             try
             {
-                //MemoryStream imageMemoryStream = new MemoryStream();
-                //await imageFile.CopyToAsync(imageMemoryStream);
-
-
-                //string imageUrl = "https://firebasestorage.googleapis.com/v0/b/image-shuffler-ui.appspot.com/o/images%2Ffalatron2%40gmail.com%2F1%2F10.jpg?alt=media&token=603e1d16-8d0e-4067-af5c-24e2de33f792";
-                //MemoryStream imageMemoryStream = null;
-                //using (var client = new HttpClient())
-                //{
-                //	var content = await client.GetByteArrayAsync(imageUrl);
-                //	imageMemoryStream = new MemoryStream(content);
-                //}
-
-
-
-                //Check that the image is valid
-                byte[] imageData = imageMemoryStream.ToArray();
-                //if (!imageData.IsValidImage())
-                //	return StatusCode(StatusCodes.Status415UnsupportedMediaType);
-
                 //Convert to Image
                 Image image = Image.FromStream(imageMemoryStream);
 
@@ -197,22 +179,25 @@ namespace ImageObjDetection.API.v1.Services
             }
         }
 
-        private Result DetectAndPaintImage(ImageInputData imageInputData, string imageFilePath)
+        private MemoryStream DetectAndPaintImage(ImageInputData imageInputData, string imageFilePath)
         {
             //Predict the objects in the image
             _objectDetectionService.DetectObjectsUsingModel(imageInputData);
             var img = _objectDetectionService.DrawBoundingBox(imageFilePath);
 
-            using (MemoryStream m = new MemoryStream())
-            {
-                img.Save(m, img.RawFormat);
-                byte[] imageBytes = m.ToArray();
+            MemoryStream m = new MemoryStream();
+            img.Save(m, img.RawFormat);
+            return m;
+            //using (MemoryStream m = new MemoryStream())
+            //{
+            //    img.Save(m, img.RawFormat);
+            //    byte[] imageBytes = m.ToArray();
 
-                // Convert byte[] to Base64 String
-                base64String = Convert.ToBase64String(imageBytes);
-                var result = new Result { imageString = base64String };
-                return result;
-            }
+            //    // Convert byte[] to Base64 String
+            //    base64String = Convert.ToBase64String(imageBytes);
+            //    var result = new Result { imageString = base64String };
+            //    return m;
+            //}
         }
 
 
