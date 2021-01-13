@@ -1,5 +1,6 @@
 ﻿using Firebase.Auth;
 using Firebase.Storage;
+using ImageObjDetection.API.Models;
 using ImageObjDetection.API.v1.Dtos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -50,13 +51,16 @@ namespace ImageObjDetection.API.v1.Services
 			FirebaseStorage firebase = await CreateFirebaseReferenceAsync();
 
 			List<MemoryStream> streams = new List<MemoryStream>();
+			List<ImageMetaOutput> imgMetaList = new List<ImageMetaOutput>();
 			for (int i = 0; i < userData.FileNames.Length; i++)
 			{
+				ImageMetaOutput imgMetaOutput = null;
 				MemoryStream stream = await DownloadFileFromUrl(userData.UserEmail, userData.DateTime, userData.FileNames[i], firebase);
-				var updatedStream = IdentifyObjects(stream, userData.FileNames[i]);
+				var outputStream = IdentifyObjects(stream, ref imgMetaOutput);
+				imgMetaOutput.FileName = userData.FileNames[i];
 
-				UploadFile(updatedStream, userData.UserEmail, userData.DateTime, userData.FileNames[i], firebase);
-				streams.Add(updatedStream);
+				UploadFile(outputStream, userData.UserEmail, userData.DateTime, userData.FileNames[i], firebase);
+				streams.Add(outputStream);
 			}
 
 			return streams;
@@ -122,7 +126,7 @@ namespace ImageObjDetection.API.v1.Services
 		}
 
 
-		public MemoryStream IdentifyObjects(MemoryStream imageMemoryStream, string fileName)
+		public MemoryStream IdentifyObjects(MemoryStream imageMemoryStream, ref ImageMetaOutput imageMetaOutput)
 		{
 			try
 			{
@@ -141,7 +145,7 @@ namespace ImageObjDetection.API.v1.Services
 				ImageInputData imageInputData = new ImageInputData { Image = bitmapImage };
 
 				//Detect the objects in the image                
-				var result = DetectAndPaintImage(imageInputData, imageMemoryStream);
+				var result = DetectAndPaintImage(imageInputData, imageMemoryStream, ref imageMetaOutput);
 
 				//Stop measuring time
 				watch.Stop();
@@ -156,7 +160,7 @@ namespace ImageObjDetection.API.v1.Services
 			}
 		}
 
-		private MemoryStream DetectAndPaintImage(ImageInputData imageInputData, MemoryStream imageMemoryStream)
+		private MemoryStream DetectAndPaintImage(ImageInputData imageInputData, MemoryStream imageMemoryStream, ref ImageMetaOutput imageMetaOutput)
 		{
 			//Predict the objects in the image
 			_objectDetectionService.DetectObjectsUsingModel(imageInputData);
@@ -165,6 +169,13 @@ namespace ImageObjDetection.API.v1.Services
 			MemoryStream m = new MemoryStream();
 			img.Save(m, img.RawFormat);
 			m.Position = 0;
+
+			imageMetaOutput = new ImageMetaOutput
+			{
+				FilteredBoxes = ((ObjectDetectionService)_objectDetectionService).FilteredBoxes,
+				ImgSize = img.Size,
+			};
+
 
 			return m;
 		}
