@@ -46,12 +46,13 @@ namespace ImageObjDetection.API.v1.Services
 
 
 
-		public async Task<List<MemoryStream>> ProcessData(UserData userData)
+		public async Task<List<string>> ProcessData(UserData userData)
 		{
 			FirebaseStorage firebase = await CreateFirebaseReferenceAsync();
 
-			List<MemoryStream> streams = new List<MemoryStream>();
 			List<ImageMetaOutput> imgMetaList = new List<ImageMetaOutput>();
+			List<string> sortedFileNames = null;
+
 			for (int i = 0; i < userData.FileNames.Length; i++)
 			{
 				ImageMetaOutput imgMetaOutput = null;
@@ -60,10 +61,15 @@ namespace ImageObjDetection.API.v1.Services
 				imgMetaOutput.FileName = userData.FileNames[i];
 
 				UploadFile(outputStream, userData.UserEmail, userData.DateTime, userData.FileNames[i], firebase);
-				streams.Add(outputStream);
+				imgMetaList.Add(imgMetaOutput);
 			}
 
-			return streams;
+			ImageShuffleService imageShuffleService = new ImageShuffleService(imgMetaList);
+			sortedFileNames = imageShuffleService.Solve();
+
+
+
+			return sortedFileNames;
 		}
 
 
@@ -100,7 +106,7 @@ namespace ImageObjDetection.API.v1.Services
 				.Child("images")
 				.Child(userEmail)
 				.Child(dateTime)
-				.Child("detected objects")
+				.Child("objectsDetected")
 				.Child(fileName)
 				.PutAsync(memoryStream);
 
