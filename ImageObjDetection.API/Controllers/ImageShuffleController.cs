@@ -3,10 +3,8 @@ using ImageObjDetection.API.v1.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using OnnxObjectDetectionWeb.Services;
+using OnnxObjectDetection.Service.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ImageObjDetection.API.Controllers

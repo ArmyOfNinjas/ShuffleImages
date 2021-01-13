@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OnnxObjectDetectionWeb\OnnxObjectDetectionWeb.csproj" />
+    <ProjectReference Include="..\OnnxObjectDetection.Service\OnnxObjectDetection.Service.csproj" />
     <ProjectReference Include="..\OnnxObjectDetection\OnnxObjectDetection.csproj" />
   </ItemGroup>
 

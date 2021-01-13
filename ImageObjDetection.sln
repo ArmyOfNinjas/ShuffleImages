@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageObjDetection.API", "Im
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnnxObjectDetection", "OnnxObjectDetection\OnnxObjectDetection.csproj", "{8886E1A0-AD45-4E3E-8930-3D023F7AF4EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnnxObjectDetectionWeb", "OnnxObjectDetectionWeb\OnnxObjectDetectionWeb.csproj", "{009560EC-DF89-4135-8E88-DEDBC0E118EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnnxObjectDetection.Service", "OnnxObjectDetection.Service\OnnxObjectDetection.Service.csproj", "{27270536-233C-42AA-BA53-A285F5C6E017}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{8886E1A0-AD45-4E3E-8930-3D023F7AF4EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8886E1A0-AD45-4E3E-8930-3D023F7AF4EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8886E1A0-AD45-4E3E-8930-3D023F7AF4EF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{009560EC-DF89-4135-8E88-DEDBC0E118EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{009560EC-DF89-4135-8E88-DEDBC0E118EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{009560EC-DF89-4135-8E88-DEDBC0E118EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{009560EC-DF89-4135-8E88-DEDBC0E118EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27270536-233C-42AA-BA53-A285F5C6E017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27270536-233C-42AA-BA53-A285F5C6E017}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27270536-233C-42AA-BA53-A285F5C6E017}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27270536-233C-42AA-BA53-A285F5C6E017}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
