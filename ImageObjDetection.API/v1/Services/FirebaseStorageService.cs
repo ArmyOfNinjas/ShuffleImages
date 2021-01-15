@@ -59,6 +59,7 @@ namespace ImageObjDetection.API.v1.Services
 				MemoryStream stream = await DownloadFileFromUrl(userData.UserEmail, userData.DateTime, userData.FileNames[i], firebase);
 				var outputStream = IdentifyObjects(stream, ref imgMetaOutput);
 				imgMetaOutput.FileName = userData.FileNames[i];
+				imgMetaOutput.Id = i;
 
 				UploadFile(outputStream, userData.UserEmail, userData.DateTime, userData.FileNames[i], firebase);
 				imgMetaList.Add(imgMetaOutput);
