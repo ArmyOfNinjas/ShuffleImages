@@ -28,9 +28,9 @@ namespace ImageObjDetection.API.Controllers
 			{
 				if (value != null)
 				{
-					var streams = await _firebaseStorageService.ProcessData(value);
+					var newFileOrder = await _firebaseStorageService.ProcessData(value);
 
-					return Ok();
+					return Ok(newFileOrder);
 				}
 				else return BadRequest("received null");
 
