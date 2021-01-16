@@ -61,8 +61,8 @@ namespace ImageObjDetection.API.v1.Services
 				imgMetaOutput.FileName = userData.FileNames[i];
 				imgMetaOutput.Id = i;
 
-				UploadFile(outputStream, userData.UserEmail, userData.DateTime, userData.FileNames[i], firebase);
-				imgMetaList.Add(imgMetaOutput);
+                UploadFile(outputStream, userData.UserEmail, userData.DateTime, userData.FileNames[i], firebase);
+                imgMetaList.Add(imgMetaOutput);
 			}
 
 			ImageShuffleService imageShuffleService = new ImageShuffleService(imgMetaList);
