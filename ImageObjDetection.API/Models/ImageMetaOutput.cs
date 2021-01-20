@@ -16,12 +16,7 @@ namespace ImageObjDetection.API.Models
 		public List<Orientation> BoxOrientations { get; set; } = new List<Orientation>();
 		public List<Orientation> BoxCollisions { get; set; } = new List<Orientation>();
 
-		public int Top { get; set; }
-		public int Right { get; set; }
-		public int Bottom { get; set; }
-		public int Left { get; set; }
-		public List<ImageMetaOutput> Neightbours { get; set; } = new List<ImageMetaOutput>();
-		public Dictionary<Orientation, ImageMetaOutput> Neightbours2 { get; set; } = new Dictionary<Orientation, ImageMetaOutput>();
+		public Dictionary<Orientation, ImageMetaOutput> Neightbours { get; set; } = new Dictionary<Orientation, ImageMetaOutput>();
 
 	}
 
