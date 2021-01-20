@@ -24,7 +24,7 @@ namespace ImageObjDetection.API.v1.Services
 			AddNeighbours2();
 			Shuffle();
 
-			var fileNames = _imgMetaList.Select(x => x.FileName).ToList();
+			var fileNames = _imgMetaList.OrderBy(x => x.Id).Select(x => x.FileName).ToList();
 
 
 			return fileNames;
@@ -64,32 +64,24 @@ namespace ImageObjDetection.API.v1.Services
 					cutoff = (node.ImgSize.Width - node.ImgSize.Height) / 2;
 					if (node.UnionBox.Left <= cutoff)
 						node.BoxOrientations.Add(Orientation.Left);
-					//node.Left = 1;
 					if (node.UnionBox.Right >= node.ImgSize.Width - cutoff)
 						node.BoxOrientations.Add(Orientation.Right);
-					//node.Right = 1;
 					if (node.UnionBox.Top <= 0)
 						node.BoxOrientations.Add(Orientation.Top);
-					//node.Top = 1;
 					if (node.UnionBox.Bottom >= node.ImgSize.Height)
 						node.BoxOrientations.Add(Orientation.Bottom);
-					//node.Bottom = 1;
 				}
 				else
 				{
 					cutoff = (node.ImgSize.Height - node.ImgSize.Width) / 2;
 					if (node.UnionBox.Left <= 0)
 						node.BoxOrientations.Add(Orientation.Left);
-					//node.Left = 1;
 					if (node.UnionBox.Right >= node.ImgSize.Width)
 						node.BoxOrientations.Add(Orientation.Right);
-					//node.Right = 1;
 					if (node.UnionBox.Top <= cutoff)
 						node.BoxOrientations.Add(Orientation.Top);
-					//node.Top = 1;
 					if (node.UnionBox.Bottom >= node.ImgSize.Height - cutoff)
 						node.BoxOrientations.Add(Orientation.Bottom);
-					//node.Bottom = 1;
 				}
 			}
 			return _imgMetaList;
@@ -152,7 +144,6 @@ namespace ImageObjDetection.API.v1.Services
 							var tempId = _imgMetaList[i].Id;
 							var tempNeighbours = _imgMetaList[i].Neightbours;
 							_imgMetaList[i].Id = _imgMetaList[j].Id;
-							//_imgMetaList[i].BoxCollisions = _imgMetaList[j].BoxCollisions;
 							_imgMetaList[i].Neightbours = _imgMetaList[j].Neightbours;
 
 							_imgMetaList[j].Id = tempId;
